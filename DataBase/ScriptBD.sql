@@ -11,6 +11,7 @@ CREATE TABLE `user` (
     `password` VARCHAR(45) NOT NULL,
     `cell_phone` INT(10) DEFAULT NULL,
     `adress_id_fk` INT DEFAULT NULL,
+    `cart` VARCHAR(100),
     CONSTRAINT `fk_adress_user`
 	FOREIGN KEY (`adress_id_fk`) REFERENCES `adress_user` (`id`)
 );

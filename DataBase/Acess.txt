@@ -1,0 +1,4 @@
+db_name: ventofresco
+host: localhost
+user: ventofresco
+PASSWORD: ventofresco@
