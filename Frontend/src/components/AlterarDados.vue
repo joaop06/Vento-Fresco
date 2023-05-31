@@ -67,6 +67,7 @@ export default ({
                     this.cliente.nome_completo = this.newNome_completo
                     this.cliente.celular = this.newCelular
                     this.cliente.email = this.newEmail
+                    console.log(this.cliente)
                     alert("Alteração realizada")
                     this.open = false
                 } else {
