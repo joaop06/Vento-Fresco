@@ -6,11 +6,7 @@ export default class ClientsRoute extends CommonRoute {
     super(ClientsController, app, 'clients')
   }
 
-  
-
   setupRoutes() {
     super.setupRoutes()
-    this.app.post('/clients/login', this.ClientsController.login)
-    this.app.post('/clients/register', this.ClientsController.register)
   }
 }
