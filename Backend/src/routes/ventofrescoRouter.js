@@ -3,9 +3,27 @@ const router = express.Router()
 const ventofrescoController = require("../controllers/ventofrescoController")
 this.ventofrescoController = new ventofrescoController()
 
-    router.get('/home', this.ventofrescoController.findAll)
+    /* Users */
+    router.post('/users/login', this.ventofrescoController.findUsersLogin)
+    router.post('/users', this.ventofrescoController.createUsers)
 
+    /* Products */
+    router.post('/products/admin', this.ventofrescoController.createProducts)
+    router.put('/products/admin', this.ventofrescoController.updateProducts)
+    router.delete('/products/admin', this.ventofrescoController.deleteProducts)
+    router.get('/products', this.ventofrescoController.findAllProducts)
 
-    router.post('/client', this.ventofrescoController.createClient)
+    /* Requests */
+    router.get('/requests/admin', this.ventofrescoController.findAllRequests)
+    router.get('/requests', this.ventofrescoController.findRequests)
+    router.post('/requests', this.ventofrescoController.createRequests)
+    router.put('/requests', this.ventofrescoController.updateRequests)
+
+    /* Clients */
+    router.get('/clients/admin', this.ventofrescoController.findAllClients)
+    router.post('/clients/login', this.ventofrescoController.findClientLogin)
+    router.post('/clients/register', this.ventofrescoController.createClients)
+    router.put('/clients', this.ventofrescoController.updateClients)
+
 
 module.exports = router
