@@ -123,14 +123,51 @@ module.exports = class ScoreController {
     /************************************************/
     /* Requests */
     async findAllRequests(req, res) {
-        
+        try {
+            connection.query(`SELECT * FROM requests`, function (err, rows) {
+                if (!err) {
+                    if (rows.length > 0) {
+                        res.status(200).json({ message: "Pedidos encontrados", data: rows })
+                    } else {
+                        res.status(204).json({ message: "Não há pedidos cadastrados" })
+                    }
+                }
+            })
+        } catch (err) {
+            res.status(500).json({ message: "Erro ao buscar os pedidos" })
+        }
     }
 
-    async findRequests(req, res) {
-
+    async findAllClientRequests(req, res) {
+        try {
+            const id = req.query.id ? req.query.id : undefined
+            if (id) {
+                connection.query(`SELECT * FROM requests WHERE client_id = ${id}`, function (err, rows) {
+                    if (!err) {
+                        if (rows.length > 0) {
+                            res.status(200).json({ message: "Pedidos encontrados", data: rows })
+                        } else {
+                            res.status(204).json({ message: "Não há pedidos cadastrados" })
+                        }
+                    }
+                })
+            } else {
+                res.status(404).json({ message: "ID do cliente não informado" })
+            }
+        } catch (err) {
+            res.status(500).json({ message: "Erro ao buscar pedidos" })
+        }
     }
 
     async createRequests(req, res) {
+        try{
+            const id = req.query.id ? req.query.id : undefined
+            if(id){
+                const body = req.body
+            }
+        } catch(err){
+
+        }
 
     }
 
