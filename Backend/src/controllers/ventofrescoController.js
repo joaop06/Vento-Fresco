@@ -89,6 +89,16 @@ module.exports = class ScoreController {
     }
 
     async deleteProducts(req, res) {
+        try {
+            const id = req.query.id ? req.query.id : undefined
+            connection.query(`DELETE FROM products WHERE id = ${id}`, function (err) {
+                if (!err) {
+                    res.status(200).json({ message: "Produto deletado com sucesso!" })
+                }
+            })
+        } catch (err) {
+            res.status(500).json({ message: "Erro ao deletar o produto" })
+        }
 
     }
 
@@ -113,7 +123,7 @@ module.exports = class ScoreController {
     /************************************************/
     /* Requests */
     async findAllRequests(req, res) {
-
+        
     }
 
     async findRequests(req, res) {
@@ -133,7 +143,20 @@ module.exports = class ScoreController {
     /************************************************/
     /* Clients */
     async findClientLogin(req, res) {
-
+        try {
+            const { email, password } = req.body
+            connection.query(`SELECT * FROM clients WHERE email = ${email} AND password = ${password}`, function (err, rows) {
+                if (!err) {
+                    if (rows.length > 0) {
+                        res.status(200).json({ message: "Login realizado!", data: rows })
+                    } else {
+                        res.status(204).json({ message: "E-mail e/ou senha incorretos" })
+                    }
+                }
+            })
+        } catch (err) {
+            res.status(500).json({ message: "Erro ao realizar o login" })
+        }
     }
 
     async findAllClients(req, res) {
