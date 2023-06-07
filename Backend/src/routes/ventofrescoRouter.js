@@ -17,7 +17,7 @@ this.ventofrescoController = new ventofrescoController()
     router.get('/requests/admin', this.ventofrescoController.findAllRequests)
     router.get('/requests', this.ventofrescoController.findAllClientRequests)
     router.post('/requests', this.ventofrescoController.createRequests)
-    router.put('/requests', this.ventofrescoController.updateRequests)
+    router.delete('/requests', this.ventofrescoController.deleteRequests)
 
     /* Clients */
     router.get('/clients/admin', this.ventofrescoController.findAllClients)

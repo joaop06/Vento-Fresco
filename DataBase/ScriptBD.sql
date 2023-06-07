@@ -26,6 +26,35 @@ CREATE TABLE products(
 SELECT * FROM products;
 DROP TABLE products;
 
+SELECT r.id AS id_request, c.name AS Name, r.value AS value, GROUP_CONCAT(p.name SEPARATOR ', ') AS products
+FROM clients c
+INNER JOIN requests r ON c.id = r.client_id_fk
+INNER JOIN requestsProducts rp ON r.id = rp.request_id
+INNER JOIN products p ON rp.product_id = p.id
+WHERE r.client_id_fk = 1
+GROUP BY r.id;
+
+CREATE TABLE requests(
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+    `client_id_fk` INT NOT NULL,
+    `value` DECIMAL(9,2) NOT NULL
+);
+SELECT * FROM requests;
+DROP TABLE requests;
+
+
+CREATE TABLE requestsProducts(
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+    `request_id` INT NOT NULL,
+    `product_id` INT NOT NULL,
+    CONSTRAINT `request_id`
+	FOREIGN KEY (`request_id`) REFERENCES requests (`id`),
+	CONSTRAINT `product_id`
+	FOREIGN KEY (`product_id`) REFERENCES products (`id`)
+);
+SELECT * FROM requestsProducts;
+DROP TABLE requestsProducts;
+
 
 CREATE TABLE clients (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -40,6 +69,7 @@ CREATE TABLE clients (
 );
 SELECT * FROM clients;
 DROP TABLE clients;
+INSERT INTO clients (`name`, `email`, `password`) VALUES ('Teste', 'testeeee@teste.com', 'teste123');
 
 
 CREATE TABLE adress_clients(

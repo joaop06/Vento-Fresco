@@ -124,7 +124,7 @@ module.exports = class ScoreController {
     /* Requests */
     async findAllRequests(req, res) {
         try {
-            connection.query(`SELECT * FROM requests`, function (err, rows) {
+            connection.query(`SELECT r.id AS id_request, c.name AS Name, r.value AS value, GROUP_CONCAT(p.name SEPARATOR ', ') AS products FROM clients c INNER JOIN requests r ON c.id = r.client_id_fk INNER JOIN requestsProducts rp ON r.id = rp.request_id INNER JOIN products p ON rp.product_id = p.id GROUP BY r.id;`, function (err, rows) {
                 if (!err) {
                     if (rows.length > 0) {
                         res.status(200).json({ message: "Pedidos encontrados", data: rows })
@@ -142,9 +142,12 @@ module.exports = class ScoreController {
         try {
             const id = req.query.id ? req.query.id : undefined
             if (id) {
-                connection.query(`SELECT * FROM requests WHERE client_id = ${id}`, function (err, rows) {
+                connection.query(`SELECT r.id AS id_request, r.value AS value, GROUP_CONCAT(p.name SEPARATOR ', ') AS products FROM requests r INNER JOIN requestsProducts rp ON r.id = rp.request_id INNER JOIN products p ON rp.product_id = p.id WHERE r.client_id_fk = ${id} GROUP BY r.id;`, function (err, rows) {
                     if (!err) {
                         if (rows.length > 0) {
+                            for (let i = 0; i < rows.length; i++) {
+                                rows[i].products = rows[i].products.split(", ")
+                            }
                             res.status(200).json({ message: "Pedidos encontrados", data: rows })
                         } else {
                             res.status(204).json({ message: "Não há pedidos cadastrados" })
@@ -160,19 +163,50 @@ module.exports = class ScoreController {
     }
 
     async createRequests(req, res) {
-        try{
+        try {
             const id = req.query.id ? req.query.id : undefined
-            if(id){
-                const body = req.body
-            }
-        } catch(err){
+            if (id) {
+                const { value, products } = req.body
+                if (value && products) {
+                    connection.query(`INSERT INTO requests VALUES (null, ${id}, ${value})`, function (err, rows) {
+                        if (!err) {
+                            const requests_id = rows.insertId
+                            for (let i = 0; i < products.length; i++) {
+                                connection.query(`INSERT INTO requestsProducts VALUES (null, ${requests_id}, ${products[i]})`, function (err) {
+                                    if (err) {
+                                        res.status(500).json({ message: "Erro ao criar pedido" })
+                                    }
+                                })
+                            }
+                            res.status(200).json({ message: "Pedido criado com sucesso" })
+
+                        } else { res.status(500).json({ message: "Erro ao criar pedido" }) }
+                    })
+                } else { res.status(400).json({ message: "Informações faltantes do pedido" }) }
+
+            } else { res.status(400).json({ message: "Cliente não informado" }) }
+        } catch (err) {
 
         }
 
     }
 
-    async updateRequests(req, res) {
-
+    async deleteRequests(req, res) {
+        try {
+            const requests_id = req.query.requests_id ? req.query.requests_id : undefined
+            connection.query(`DELETE FROM requestsProducts WHERE requests_id = ${requests_id}`, function (err) {
+                if (!err) {
+                    connection.query(`DELETE FROM requests WHERE id = ${requests_id}`, function (err) {
+                        if (!err) {
+                            res.status(200).json({ message: "Pedido deletado com sucesso" })
+                        }
+                    })
+                }
+            })
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({ message: "Erro ao deletar pedido" })
+        }
     }
 
 
